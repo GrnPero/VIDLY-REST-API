@@ -94,7 +94,7 @@ function validateGenre(genre) {
 }
 
 // Deletes the genre from the array based on the ID the usere provided
-app.delete('/api/genres/:id', (req, res) {
+app.delete('/api/genres/:id', (req, res) => {
     // Finds if the genre exists in the genres array
     const genre = genres.find(g => g.id === parseInt(req.params.id));
 
