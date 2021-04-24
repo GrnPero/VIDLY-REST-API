@@ -1,7 +1,9 @@
+// Uses Joi and express in this node application
 const Joi = require('joi');
 const express = require('express');
 const app = express();
 
+// Uses express json
 app.use(express.json());
 
 // Our fake database for genres stored in an array
@@ -43,7 +45,7 @@ app.post('/api/genres', (req, res) => {
 
     // Checks if an error exist in this request
     if (error) {
-        return res.status(400).send(result.error.details[0].message);        
+        return res.status(400).send(error.details[0].message);        
     }
 
     // Create the genre object based on user request
@@ -73,7 +75,7 @@ app.put('/api/genres/:id', (req, res) => {
     
     // Checks if an error exist in this request
     if (error) {
-        return res.status(400).send(result.error.details[0].message);
+        return res.status(400).send(error.details[0].message);
     }
 
     // Updates the genre name with the user requested genre based on ID
