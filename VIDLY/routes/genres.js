@@ -73,19 +73,19 @@ router.post('/', async (req, res) => {
 
 // Updates the genre based on ID provided by the user
 router.put('/:id', async (req, res) => {
-    // Matches the requested id with the id in the database if available
-    try {
-        const genre = await Genre.findById(req.params.id);
-    } catch (ex) {
-        return res.status(404).send('The genre with the given ID was not found');
-    }
-
     // Finds if an error exist 
     const { error } = validateGenre(req.body);
 
     // Checks if an error exist in this request
     if (error) {
         return res.status(400).send(error.details[0].message);
+    }
+
+    // Matches the requested id with the id in the database if available
+    try {
+        let genre = await Genre.findById(req.params.id);
+    } catch (ex) {
+        return res.status(404).send('The genre with the given ID was not found');
     }
 
     // Updates the genre name from the request then saves the changes to the database
