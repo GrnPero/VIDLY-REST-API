@@ -84,11 +84,41 @@ router.post('/', async (req, res) => {
 // Finds the user ID then updates the customer
 router.put('/:id', async (req, res) => {
     // Finds if an error exist for the req
+    const { error } = validateCustomer(req.body);
+
+    // Check if their is an error in this request
+    if (error) {
+        return res.status(400).send(error.details[0].message);
+    }
+
+    // Searches for the id in the database, if not found return a 404
+    try {
+        let customer = await Customer.findById(req.params.id);
+
+        // Updates: name, phone, isGold
+        customer.name = req.body.name;
+        customer.phone = req.body.phone;
+        customer.isGold = req.body.isGold;
+        const result = await customer.save();
+
+        // Returns a response of the customer that has been updated
+        res.send(result);
+    } catch (ex) {
+        return res.status(404).send('The genre with the given ID was not found');
+    }
 });
 
 // Deletes the customer by id
 router.delete('/:id', async (req, res) => {
+    // Searches for the id in the database, returns a 404 if not found
+    try {
+        const customer = await Customer.findByIdAndRemove(req.params.id);
 
+        // Returns a reponse of the deleted customer
+        res.send(customer);
+    } catch (ex) {
+        res.status(404).send('The genre with the given ID was not found!');
+    }
 });
 
 // Validates user input
@@ -97,7 +127,7 @@ function validateCustomer(customer) {
     const schema = Joi.object({
         name: Joi.string().min(3).required(),
         phone: Joi.string().min(3).required(),
-        isGols: Joi.boolean().
+        isGold: Joi.boolean()
     }); 
 
     // Returns if their is an error with the user input

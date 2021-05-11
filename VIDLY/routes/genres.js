@@ -84,15 +84,16 @@ router.put('/:id', async (req, res) => {
     // Matches the requested id with the id in the database if available
     try {
         let genre = await Genre.findById(req.params.id);
+
+        // Updates the genre name from the request then saves the changes to the database
+        genre.name = req.body.name;
+        const result = await genre.save();
+
+        // Sends the user the genre they submitted
+        res.send(result);
     } catch (ex) {
         return res.status(404).send('The genre with the given ID was not found');
     }
-
-    // Updates the genre name from the request then saves the changes to the database
-    genre.name = req.body.name;
-    const result = await genre.save();
-    // Sends the user the genre they submitted
-    res.send(result);
 });
 
 // Deletes the genre from the database based on the ID the user provided
