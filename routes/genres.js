@@ -1,24 +1,7 @@
-const Joi = require('joi');
+const { Genre, validate } = require('../models/genre');
+const mongoose = require('mongoose');
 const express = require('express');
 const router = express.Router();
-
-const mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost/vidly', {useNewUrlParser: true, useUnifiedTopology: true})
-    .then(() => console.log('Connected to MongoDB...'))
-    .catch(err => console.error('Could not connect to MongoDB...', err));
-
-// Creates the Genre schema to be used for the Genre model
-const genreSchema = new mongoose.Schema({
-    name: {
-        type: String,
-        required: true,
-        minlength: 3,
-        maxlength: 255
-    }
-});
-
-// We create the Genre model to be used for the database
-const Genre = mongoose.model('Genre', genreSchema);
 
 // Shows the user all the available services
 router.get('/', async (req, res) => {
@@ -45,7 +28,7 @@ router.get('/:id', async (req, res) => {
 // Allows the user to add the genre to the genres array with the POST route
 router.post('/', async (req, res) => {
     // Finds if an error exist 
-    const { error } = validateGenre(req.body);
+    const { error } = validate(req.body);
 
     // Checks if an error exist in this request
     if (error) {
@@ -74,7 +57,7 @@ router.post('/', async (req, res) => {
 // Updates the genre based on ID provided by the user
 router.put('/:id', async (req, res) => {
     // Finds if an error exist 
-    const { error } = validateGenre(req.body);
+    const { error } = validate(req.body);
 
     // Checks if an error exist in this request
     if (error) {
@@ -108,16 +91,5 @@ router.delete('/:id', async (req, res) => {
         res.status(404).send('The genre with the given ID was not found!');
     }
 });
-
-// Validates user input
-function validateGenre(genre) {
-    // Creates the schema object for the user requested genre
-    const schema = Joi.object({
-        name: Joi.string().min(3).required()
-    });
-
-    // Returns if their is an error with the user input
-    return schema.validate(genre);
-}
 
 module.exports = router;
